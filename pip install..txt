@@ -1,0 +1,2 @@
+"%USERPROFILE%\venvs\spyder-env\Scripts\activate"
+pip install whatever
