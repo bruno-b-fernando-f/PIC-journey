@@ -1,0 +1,1 @@
+The files are based on the files made available by Ansys at https://optics.ansys.com/hc/en-us/articles/19435937674387-Thin-Film-Lithium-Niobate-Electro-Optic-Phase-Modulator

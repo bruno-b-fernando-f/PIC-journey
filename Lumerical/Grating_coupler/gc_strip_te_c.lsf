@@ -1,0 +1,136 @@
+##################################################################
+
+#  Copyright 2023, Ansys Inc.. All rights reserved.  
+
+# Unauthorized use, distribution, or duplication is prohibited.  
+# This product is subject to U.S. laws governing export and re-export.  
+
+# For full Legal Notice, see documentation.
+
+##################################################################
+###########################################################
+# Script file: Grating coupler_dataCMLCompiler.lsf
+#
+# Description: This file can be used to extract the parameters
+#	required by the CML Compiler to build a grating coupler
+#	element.
+#
+###########################################################
+clear;
+
+###########################################################
+## User defined parameters
+# These are parameters that must be set by the user
+###########################################################
+
+
+# General: includes the model description, prefix and notes
+
+general=struct;
+general.description='Foundry grating coupler - TE'; # Please give a brief description, e.g., "Grating coupler for TE mode"
+
+#CML notes  
+# Feel free to add notes as you see fit
+general.notes=cell(1);
+general.notes{1}=struct;
+general.notes{1}.property='wavelength_range';
+general.notes{1}.value='C-band (1530 - 1565 nm)';
+# notes{2} = struct; 		# Please follow the same syntax as notes{1}
+
+
+general.prefix='GC';
+
+#ports: defines the ports for element. Generally, this noot to change and we strongly recommend using the same port name.
+
+ports=struct;
+ports.opt_1=struct;
+ports.opt_1.dir='Bidirectional';
+ports.opt_1.loc=0.5;
+ports.opt_1.name='opt_1'; #Optical 1
+ports.opt_1.order=1;
+ports.opt_1.pos='Left';
+ports.opt_2=struct;
+ports.opt_2.dir='Bidirectional';
+ports.opt_2.loc=0.5;
+ports.opt_2.name='opt_2'; #Opical 2
+ports.opt_2.order=2;
+ports.opt_2.pos='Right';
+
+#model data: Data used to model the properties of the element
+
+model_data=struct;
+model_data.digital_filter_type='FIR'; # 'FIR' filter type should be used where phase information is important
+                              # 'IIR' can be used in cases where phase is not important but transmission is freqeuncy dependent
+model_data.fir_taps=64; # Number of taps for finite impulse response filter.
+                # Larger number allows to resolve frequency dependence better but increases time delay.
+                # Suggestion: set to ~64 for devices where dispersive properties are important
+                # set to ~1 for devices that will be used in circuits where time delays are a concern
+model_data.iir_taps=4; # Number of taps for infinite impulse response filter.
+                # For most cases the default number of taps (4) is sufficient.  In some cases it might be necessary to use a larger value
+model_data.mode_data=cell(1);
+model_data.mode_data{1}=struct;
+model_data.mode_data{1}.ID=1;
+model_data.mode_data{1}.name='TE';
+model_data.number_of_taps_estimation='fit tolerance';
+model_data.passivity_enforcement='ignore';
+model_data.photonic_model='spar_fixed'; #photonics model used in the element
+model_data.reciprocity_enforcement='ignore';
+#S-parameter
+model_data.spar_filename='gc_strip_te_c_S_params.txt'; #S-parameter for grating coupler from FDTD simulation
+
+
+
+#QA test
+
+QA=struct;
+
+#Parameters for QA test
+QA.parameters=struct;
+
+#Relative tolerance for QA tests
+#Note: If simulation value is different from the value provided within the data file by more than this toleance th QA test will fail.
+
+QA.absolute_tolerances=struct;
+QA.absolute_tolerances.S_data=0.0001; # dimensionless looks at source data |S-S_data| in absolute terms, phase will matter!
+#QA.absolute_tolerances.S_regression=1e-05;
+QA.absolute_tolerances.S_regression=0.7;  # dimensionless looks at reference data |S-S_ref| in absolute terms, phase will matter!
+QA.absolute_tolerances.S_time=0.025; # time domain difference with frequency domain over middle bandwidth
+QA.absolute_tolerances.passivity=1e-05;  # dimensionless
+#QA.absolute_tolerances.power_dB=1e-06;
+QA.absolute_tolerances.power_dB=70; #dB
+QA.absolute_tolerances.reciprocity=0.05;  # dimensionless
+#QA.absolute_tolerances.wavelength_nm=1e-05;
+QA.absolute_tolerances.wavelength_nm=1e-05; # nm
+
+QA.compare_time_abs_transmission=1;  # Set this to 1 (true) when using multiple taps with s-parameter data with no angle variation to compare only the magnitude of transmission between time and frequency domain tests
+QA.compare_time_bandwidth_fraction=0.3; # fraction of bandwidth over which to compare time domain results to frequency domain
+
+QA.custom_qa_filenames=cell(1);
+QA.custom_qa_filenames{1}='grating_qa.lsf';
+QA.number_wavelength_points=1000;
+QA.reference_data_available=1;
+
+#Wavelength
+QA.parameters.wavelength=struct;
+QA.parameters.wavelength.max=1.6e-06; # m
+QA.parameters.wavelength.min=1.5e-06; # m
+
+
+#######################################################################
+#Export model source data structs to JSON file
+#######################################################################
+
+jsonsave("gc_strip_te_c.json",general,ports,model_data,QA);
+
+
+
+
+
+
+
+
+
+
+
+
+

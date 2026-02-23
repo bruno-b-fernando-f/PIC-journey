@@ -1,0 +1,47 @@
+# gap values array (in meters)
+waveguide_widths = linspace(2.15e-6, 2.45e-6,15);
+
+# object names
+signal_name = "Signal Electrode";
+ground_left_name = "Ground Electrode Left";
+
+
+Vpi_L_array = zeros(length(waveguide_widths));
+
+# loop over gap values
+for (i=1:length(waveguide_widths)) {
+
+    wg_width = waveguide_widths(i);
+    wg_height = 600e-9;
+    gap_width = 5e-6;
+    
+    switchtolayout;
+    # set electrode positions
+    setnamed(signal_name, "x",  -2.5e-6+gap_width/2);
+    setnamed(ground_left_name, "x", -12e-6-gap_width/2);
+    
+    #Set dimensions of the waveguide       
+    
+    V = getnamed("LiNbO3 WG","vertices");
+    V(1,1) = -7.25e-6+wg_width/2;
+    V(2,1) = -7.25e-6+wg_width/2;
+    V(2,2) = 2.5e-6+wg_height;
+    V(3,1) = -7.25e-6-wg_width/2;
+    V(3,2) = 2.5e-6+wg_height;
+    V(4,1) = -7.25e-6-wg_width/2;
+    setnamed("LiNbO3 WG","vertices",V);
+
+    # run CHARGE simulation script
+    LN_phase_modulator_CHARGE;
+
+    # run FEEM simulation script
+    LN_phase_modulator_FEEM;
+    
+    Vpi_L_array(i) = Volt(2)*L_pi(2)*100/2;
+    
+    matlabsave("wg_width_vs_VpiL.mat", waveguide_widths, Vpi_L_array);
+
+}
+
+
+

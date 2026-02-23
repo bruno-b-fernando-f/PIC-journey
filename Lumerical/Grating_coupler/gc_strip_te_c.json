@@ -1,0 +1,89 @@
+{
+  "QA" : 
+  {
+    "absolute_tolerances" : 
+    {
+      "S_data" : 0.0001,
+      "S_regression" : 0.69999999999999996,
+      "S_time" : 0.025000000000000001,
+      "passivity" : 1.0000000000000001e-05,
+      "power_dB" : 70.0,
+      "reciprocity" : 0.050000000000000003,
+      "wavelength_nm" : 1.0000000000000001e-05
+    },
+    "compare_time_abs_transmission" : 1.0,
+    "compare_time_bandwidth_fraction" : 0.29999999999999999,
+    "custom_qa_filenames" : 
+    {
+      "_data" : [ "grating_qa.lsf" ],
+      "_type" : "cell"
+    },
+    "number_wavelength_points" : 1000.0,
+    "parameters" : 
+    {
+      "wavelength" : 
+      {
+        "max" : 1.5999999999999999e-06,
+        "min" : 1.5e-06
+      }
+    },
+    "reference_data_available" : 1.0
+  },
+  "general" : 
+  {
+    "description" : "Foundry grating coupler - TE",
+    "notes" : 
+    {
+      "_data" : 
+      [
+        {
+          "property" : "wavelength_range",
+          "value" : "C-band (1530 - 1565 nm)"
+        }
+      ],
+      "_type" : "cell"
+    },
+    "prefix" : "GC"
+  },
+  "model_data" : 
+  {
+    "digital_filter_type" : "FIR",
+    "fir_taps" : 64.0,
+    "iir_taps" : 4.0,
+    "mode_data" : 
+    {
+      "_data" : 
+      [
+        {
+          "ID" : 1.0,
+          "name" : "TE"
+        }
+      ],
+      "_type" : "cell"
+    },
+    "number_of_taps_estimation" : "fit tolerance",
+    "passivity_enforcement" : "ignore",
+    "photonic_model" : "spar_fixed",
+    "reciprocity_enforcement" : "ignore",
+    "spar_filename" : "gc_strip_te_c_S_params.txt"
+  },
+  "ports" : 
+  {
+    "opt_1" : 
+    {
+      "dir" : "Bidirectional",
+      "loc" : 0.5,
+      "name" : "opt_1",
+      "order" : 1.0,
+      "pos" : "Left"
+    },
+    "opt_2" : 
+    {
+      "dir" : "Bidirectional",
+      "loc" : 0.5,
+      "name" : "opt_2",
+      "order" : 2.0,
+      "pos" : "Right"
+    }
+  }
+}

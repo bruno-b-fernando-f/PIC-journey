@@ -1,0 +1,44 @@
+# gap values array (in meters)
+gap_array = linspace(3e-6, 10e-6, 2);
+
+# object names
+signal_name = "Signal Electrode";
+ground_left_name = "Ground Electrode Left";
+
+
+Vpi_L_array = zeros(length(gap_array));
+
+# loop over gap values
+for (i=1:length(gap_array)) {
+
+    gap_width = gap_array(i);
+    
+    switchtolayout;
+    # set electrode positions
+    setnamed(signal_name, "x",  -2.5e-6+gap_width/2);
+    setnamed(ground_left_name, "x", -12e-6-gap_width/2);
+
+    # run CHARGE simulation script
+    LN_phase_modulator_CHARGE;
+
+    # run FEEM simulation script
+    LN_phase_modulator_FEEM;
+    
+    Vpi_L_array(i) = Volt(2)*L_pi(2)*100/2;
+
+}
+
+
+filename = "gap_vs_VpiL_v0.csv";
+
+# combine into matrix (columns)
+data = matrix(length(gap_array), 2);
+data(:,1) = gap_array;
+data(:,2) = Vpi_L_array;
+
+# optional header
+write(filename, "gap_m,VpiL_Vm");
+
+# append data
+write(filename, data);
+

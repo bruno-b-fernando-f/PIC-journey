@@ -1,0 +1,49 @@
+# object names
+signal_name = "Signal Electrode";
+ground_left_name = "Ground Electrode Left";
+
+n_points = 500;
+gap_array = zeros(n_points);
+waveguide_widths = zeros(n_points);
+waveguide_heights = zeros(n_points);
+Vpi_L_array = zeros(n_points);
+
+# loop over gap values
+for (i=1:length(gap_array)) {
+
+    gap_width = 5e-6 + 1e-6*randn();
+    wg_height = 600e-9 + 20e-9*randn();
+    wg_width = 2.3e-6 + 150e-9*randn();
+
+    
+    switchtolayout;
+    # set electrode positions
+    setnamed(signal_name, "x",  -2.5e-6+gap_width/2);
+    setnamed(ground_left_name, "x", -12e-6-gap_width/2);
+    
+    #Set dimensions of the waveguide   
+    V = getnamed("LiNbO3 WG","vertices");
+    V(1,1) = -7.25e-6+wg_width/2;
+    V(2,1) = -7.25e-6+wg_width/2;
+    V(2,2) = 2.5e-6+wg_height;
+    V(3,1) = -7.25e-6-wg_width/2;
+    V(3,2) = 2.5e-6+wg_height;
+    V(4,1) = -7.25e-6-wg_width/2;
+    setnamed("LiNbO3 WG","vertices",V);
+
+    # run CHARGE simulation script
+    LN_phase_modulator_CHARGE;
+
+    # run FEEM simulation script
+    LN_phase_modulator_FEEM;
+    
+    gap_array(i) = gap_width;
+    waveguide_widths(i) = wg_width;
+    waveguide_heights(i) = wg_height;
+    Vpi_L_array(i) = Volt(2)*L_pi(2)*100/2;
+    
+    matlabsave("Monte_carlo_2.mat", gap_array, waveguide_widths,waveguide_heights, Vpi_L_array);
+
+}
+
+
